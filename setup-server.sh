@@ -40,22 +40,31 @@ usermod -aG sudo "$USERNAME"
 echo "Updating packages..."
 apt update -y
 
-echo "Installing Cockpit, btop, Fail2Ban, and UFW..."
-apt install -y cockpit btop fail2ban ufw
+echo "Installing Cockpit, btop, Fail2Ban, NGINX, and UFW..."
+apt install -y cockpit btop fail2ban nginx ufw
 
 # 4. Enable Cockpit service
 echo "Enabling Cockpit service..."
 systemctl enable --now cockpit.socket
 
-# 5. Set hostname
+# 5. Enable and start NGINX
+echo "Enabling and starting NGINX..."
+systemctl enable --now nginx
+
+# 6. Set hostname
 echo "Setting hostname to '$HOSTNAME'..."
 hostnamectl set-hostname "$HOSTNAME"
 
-# 6. Configure UFW firewall
+# 7. Configure UFW firewall
 echo "Configuring UFW firewall..."
+
+# Reset UFW rules for a clean start
+ufw --force reset
 
 # Allow essential services
 ufw allow OpenSSH
+ufw allow 80/tcp comment 'HTTP (NGINX)'
+ufw allow 443/tcp comment 'HTTPS (NGINX)'
 ufw allow 9090/tcp comment 'Cockpit Web UI'
 
 # Enable firewall
@@ -65,17 +74,22 @@ echo "UFW configuration complete."
 echo "Allowed ports:"
 ufw status numbered
 
-# 7. Enable Fail2Ban
+# 8. Enable Fail2Ban
 echo "Enabling Fail2Ban service..."
 systemctl enable --now fail2ban
 
-# 8. Final summary
+# 9. Print web info
+SERVER_IP=$(hostname -I | awk '{print $1}')
+
 echo
 echo "==============================="
 echo "Setup complete!"
 echo "User: $USERNAME"
 echo "Hostname: $HOSTNAME"
-echo "Cockpit Web UI: https://$(hostname -I | awk '{print $1}'):9090"
+echo
+echo "Cockpit:  https://$SERVER_IP:9090"
+echo "Website:  http://$SERVER_IP/"
+echo "Web root: /var/www/html"
 echo "==============================="
 echo
 echo "Rebooting in 5 seconds..."
