@@ -139,24 +139,24 @@ echo "Fail2Ban hardening applied."
 echo "Hardening SSH configuration..."
 
 # Allow root login
-sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+#----- sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # Still enforce secure defaults
-sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-sed -i 's/^#\?X11Forwarding.*/X11Forwarding no/' /etc/ssh/sshd_config
-sed -i 's/^#\?PermitEmptyPasswords.*/PermitEmptyPasswords no/' /etc/ssh/sshd_config
+#---sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+#---sed -i 's/^#\?X11Forwarding.*/X11Forwarding no/' /etc/ssh/sshd_config
+#---sed -i 's/^#\?PermitEmptyPasswords.*/PermitEmptyPasswords no/' /etc/ssh/sshd_config
 
 # Hardened crypto
-cat >> /etc/ssh/sshd_config << 'EOF'
+#---cat >> /etc/ssh/sshd_config << 'EOF'
 
 # Hardened SSH Crypto Settings
-KexAlgorithms curve25519-sha256@libssh.org
-MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
-Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
-EOF
+#---KexAlgorithms curve25519-sha256@libssh.org
+#---MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+#---Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+#---EOF
 
-systemctl restart sshd
-echo "SSH hardening applied (root login allowed)."
+#---systemctl restart sshd
+#-----echo "SSH hardening applied (root login allowed)."
 
 # ------------------------------
 # SYSCTL HARDENING
